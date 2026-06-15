@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AE Skills — App Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0B0F1A;
+      --surface:   #141926;
+      --card:      #1B2235;
+      --border:    #252D42;
+      --accent:    #4F8EF7;
+      --accent2:   #7C5CFC;
+      --green:     #34D399;
+      --orange:    #F59E0B;
+      --red:       #F87171;
+      --text:      #E8EDF5;
+      --muted:     #7A8599;
+      --tag-bg:    #1E2A44;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0d1220 0%, #111827 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 40px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .logo-area { display: flex; align-items: center; gap: 14px; }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .logo-text h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px; font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .logo-text p { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+    .header-right { display: flex; align-items: center; gap: 20px; }
+    .app-count {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    #search-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px 8px 36px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      width: 220px;
+      outline: none;
+      transition: border-color .2s;
+      position: relative;
+    }
+    #search-box:focus { border-color: var(--accent); }
+    .search-wrap { position: relative; }
+    .search-icon {
+      position: absolute; left: 11px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); font-size: 14px; pointer-events: none;
+    }
+
+    /* ── MAIN ── */
+    main { padding: 36px 40px 60px; max-width: 1280px; margin: 0 auto; }
+
+    /* ── FILTER TABS ── */
+    .filter-bar {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-family: inherit;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      font-weight: 500;
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      cursor: pointer;
+      transition: transform .2s, border-color .25s, box-shadow .25s;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--card-accent, var(--accent)) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+    }
+    .card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 12px 36px rgba(79,142,247,.15); }
+    .card:hover::before { opacity: 0.06; }
+
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .open-arrow {
+      width: 28px; height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      font-size: 13px;
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+    .card:hover .open-arrow { border-color: var(--accent); color: var(--accent); background: rgba(79,142,247,.1); }
+
+    .card-body h2 { font-size: 15px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; }
+    .card-body p  { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+    .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+    .tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      flex-shrink: 0;
+    }
+    .status-dot.offline { background: var(--red); box-shadow: 0 0 6px var(--red); }
+    .status-dot.dev     { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
+
+    .status-wrap { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+
+    /* ── EMPTY STATE ── */
+    #empty-state {
+      display: none;
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--muted);
+    }
+    #empty-state .emoji { font-size: 40px; margin-bottom: 16px; }
+    #empty-state h3 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 18px 20px; flex-wrap: wrap; gap: 12px; }
+      main   { padding: 24px 16px 48px; }
+      .header-right { width: 100%; }
+      #search-box { width: 100%; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo-area">
+    <div class="logo-icon">⚡</div>
+    <div class="logo-text">
+      <h1>AE Skills — App Hub</h1>
+      <p>All internal tools & web apps in one place</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="app-count" id="app-count">10 Apps</span>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input id="search-box" type="text" placeholder="Search apps…" oninput="filterCards()"/>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+    <button class="filter-btn" onclick="setFilter('EdTech', this)">EdTech</button>
+    <button class="filter-btn" onclick="setFilter('Analytics', this)">Analytics</button>
+    <button class="filter-btn" onclick="setFilter('Reports', this)">Reports</button>
+    <button class="filter-btn" onclick="setFilter('Tools', this)">Tools</button>
+  </div>
+
+  <p class="section-label" id="section-label">All Applications</p>
+
+  <div class="grid" id="app-grid">
+    <!-- Cards injected by JS -->
+  </div>
+
+  <div id="empty-state">
+    <div class="emoji">🔍</div>
+    <h3>No apps found</h3>
+    <p>Try a different search term or filter.</p>
+  </div>
+</main>
+
+<footer>AE Skills Internal Tools Hub &nbsp;·&nbsp; Built for the team</footer>
+
+<script>
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     ✏️  EDIT YOUR APPS HERE
+     Replace the placeholder URLs, names,
+     descriptions, icons, and categories.
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  const apps = [
+    {
+      name: "Adobe Express for Education",
+      desc: "Recover and manage student & teacher credentials for Adobe Express. Quick access for institution admins.",
+      url:  "https://aeskills.github.io/AdobeExpressforEducation/",
+      icon: "🔐",
+      iconBg: "linear-gradient(135deg,#FF4B4B,#CC0000)",
+      category: "Tools",
+      status: "live"
+    },
+    {
+      name: "CLAnalysis",
+      desc: "Extract unique users from Adobe Admin Console content log files. Fast analysis of learner activity data.",
+      url:  "https://aeskills.github.io/CLAnalysis/",
+      icon: "🔬",
+      iconBg: "linear-gradient(135deg,#F472B6,#EC4899)",
+      category: "Analytics",
+      status: "live"
+    },
+    {
+      name: "CPD AI Classroom",
+      desc: "AI-powered CPD session classroom for structured teacher training with videos, quizzes & certificates.",
+      url:  "https://aeskills.github.io/CPD/",
+      icon: "🎓",
+      iconBg: "linear-gradient(135deg,#4F8EF7,#7C5CFC)",
+      category: "EdTech",
+      status: "live"
+    },
+    {
+      name: "CPD Link Validator",
+      desc: "Validate teacher-uploaded links after CPD sessions. Instantly checks which links are correct & working.",
+      url:  "https://aeskills.github.io/LinkValidatorForCPDTeachers/",
+      icon: "🔗",
+      iconBg: "linear-gradient(135deg,#A78BFA,#7C3AED)",
+      category: "Tools",
+      status: "live"
+    },
+    {
+      name: "CSV Merger",
+      desc: "Merge multiple CSV files into one in seconds. Built for fast bulk data consolidation workflows.",
+      url:  "https://aeskills.github.io/CSVMerger/",
+      icon: "📂",
+      iconBg: "linear-gradient(135deg,#34D399,#059669)",
+      category: "Tools",
+      status: "live"
+    },
+    {
+      name: "Engagement Reports",
+      desc: "Generate custom engagement reports as per requirements — tailored outputs for Adobe Education sessions.",
+      url:  "https://aeskills.github.io/Reports/",
+      icon: "📊",
+      iconBg: "linear-gradient(135deg,#F59E0B,#D97706)",
+      category: "Reports",
+      status: "live"
+    }
+  ];
+
+  /* ── RENDER ── */
+  let activeFilter = 'all';
+
+  function renderCards(list) {
+    const grid = document.getElementById('app-grid');
+    const empty = document.getElementById('empty-state');
+    const countEl = document.getElementById('app-count');
+    const label = document.getElementById('section-label');
+
+    grid.innerHTML = '';
+
+    if (!list.length) {
+      empty.style.display = 'block';
+      countEl.textContent = '0 Apps';
+      return;
+    }
+    empty.style.display = 'none';
+    countEl.textContent = list.length + ' App' + (list.length !== 1 ? 's' : '');
+    label.textContent = activeFilter === 'all' ? 'All Applications' : activeFilter + ' Apps';
+
+    list.forEach(app => {
+      const statusLabel = app.status === 'live' ? 'Live' : app.status === 'dev' ? 'Dev' : 'Offline';
+      const statusClass = app.status === 'live' ? '' : app.status === 'dev' ? 'dev' : 'offline';
+
+      const card = document.createElement('a');
+      card.className = 'card';
+      card.href = app.url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      card.dataset.category = app.category;
+      card.dataset.name = app.name.toLowerCase();
+      card.dataset.desc = app.desc.toLowerCase();
+
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-icon" style="background:${app.iconBg}">${app.icon}</div>
+          <div class="open-arrow">↗</div>
+        </div>
+        <div class="card-body">
+          <h2>${app.name}</h2>
+          <p>${app.desc}</p>
+        </div>
+        <div class="card-footer">
+          <span class="tag">${app.category}</span>
+          <div class="status-wrap">
+            <div class="status-dot ${statusClass}"></div>
+            ${statusLabel}
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function getFiltered() {
+    const q = document.getElementById('search-box').value.toLowerCase();
+    return apps.filter(a => {
+      const matchFilter = activeFilter === 'all' || a.category === activeFilter;
+      const matchSearch = !q || a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q) || a.category.toLowerCase().includes(q);
+      return matchFilter && matchSearch;
+    });
+  }
+
+  function filterCards() { renderCards(getFiltered()); }
+
+  function setFilter(cat, btn) {
+    activeFilter = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterCards();
+  }
+
+  // Initial render
+  renderCards(apps);
+</script>
+</body>
+</html>
